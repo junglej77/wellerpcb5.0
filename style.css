@@ -1,0 +1,114 @@
+/*
+Template Name: WeleerPCB 4.0
+Template URI: http://www.wellerpcb.com
+Description: 初始化css
+Author: Jungle
+Author URI: http://www.wellerpcb.com
+Version: 4.0
+ */
+
+/*Reset
+ ====================================================================
+
+ ***/
+
+* {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	outline: none;
+	font-size: 100%;
+}
+
+
+
+/***
+
+ ====================================================================
+ Global Settings
+ ====================================================================
+
+ ***/
+
+body {
+
+	font-size: 14px;
+	color: #333333;
+	line-height: 28px;
+	font-weight: 400;
+	background: #ffffff;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	font-family: 'Montserrat', 'Poppins', sans-serif;
+}
+
+a {
+	text-decoration: none;
+	cursor: pointer;
+	color: #349d67;
+	font-family: 'Montserrat', sans-serif;
+}
+
+a:hover,
+a:focus,
+a:visited {
+	text-decoration: none;
+	outline: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	position: relative;
+	font-weight: normal;
+	margin: 0px;
+	background: none;
+	line-height: 1.2em;
+	color: #333333;
+	font-family: 'Montserrat', sans-serif;
+	letter-spacing: -1px;
+}
+
+textarea {
+	overflow: hidden;
+	resize: none;
+}
+
+button {
+	outline: none !important;
+	cursor: pointer;
+}
+
+p,
+.text {
+	font-size: 18px;
+	line-height: 28px;
+	font-weight: 400;
+	color: #333333;
+	margin: 0;
+	font-family: 'Montserrat', sans-serif;
+	letter-spacing: -1px;
+}
+
+::-webkit-input-placeholder {
+	color: inherit;
+}
+
+::-moz-input-placeholder {
+	color: inherit;
+}
+
+::-ms-input-placeholder {
+	color: inherit;
+}
+
+ul,
+li {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	font-family: 'Montserrat', sans-serif;
+}

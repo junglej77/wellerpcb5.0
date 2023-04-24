@@ -1,0 +1,26 @@
+[
+    {
+        "parentID": null,
+        "id": 1,
+        "sectionType": "indexSection"
+    },
+    {
+        "parentID": 4,
+        "id": 5,
+        "sectionType": "indexSectionasdsa",
+        "list": [
+            {
+                "parentID": 5,
+                "id": 6,
+                "sectionType": "list1",
+                "list": [
+                    {
+                        "parentID": 6,
+                        "id": 7,
+                        "sectionType": "indexSection"
+                    }
+                ]
+            }
+        ]
+    }
+]
