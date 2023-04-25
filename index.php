@@ -2,7 +2,7 @@
     exit;
 } ?>
 <!--首页模板-->
-<?php my_header(); ?>
+<?php my_header() ?>
 
 <!-- Banner -->
 <section class="banner page-screen banner-screen">

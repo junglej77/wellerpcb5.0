@@ -91,6 +91,56 @@
         </div>
       </div>
       <!--End Header Lower-->
-
     </header>
+    <!--mobile Menu -->
+    <nav class="main-mobile-menu">
+      <?php
+      $args = array(
+        'sectionType' => 'main_menu'
+      );
+      $results = get_page_sections_tree_data($args, $orderby = 'menu_order');
+      if (!empty($results['data']) && !empty($results['data'][0]->children)) {
+      ?>
+        <?php
+        function renderMobileSections($results, $parentId)
+        {
+        ?>
+          <ul <?php
+              echo
+              $results[0]->parentId === $parentId ? 'class="navigation clearfix"' : '' ?>>
+            <?php
+            foreach ($results as $section) {
+            ?>
+              <li <?php
+                  $classname = 'class="';
+                  $droplist = !empty($section->children) ? 'droplist' : '';
+                  $current = (current_url()['hosturl'] === $section->linkTo || current_url()['url'] === $section->linkTo) ? 'current' : '';
+                  $classname .= $droplist . $current . '"';
+                  echo (!strpos($classname, 'droplist') && !strpos($classname, 'current')) ? '' : $classname
+                  ?>>
+                <?php if (empty($section->children)) { ?>
+                  <a href="<?php echo $section->linkTo ?>">
+                    <?php echo $section->title ?>
+                  </a>
+                <?php } else { ?>
+                  <span>
+                    <?php echo $section->title ?>
+                  </span>
+                <?php } ?>
+                <?php
+                if (!empty($section->children)) {
+                  // 如果该对象中有列表，则递归遍历列表中的每个对象
+                  renderMobileSections($section->children, $parentId);
+                }
+                ?>
+              </li>
+            <?php } ?>
+          </ul>
+        <?php } ?>
+      <?php
+        renderMobileSections($results['data'][0]->children, $results['data'][0]->id);
+      }
+      ?>
+    </nav>
+    <!-- mobile Menu End-->
     <!--End Main Header -->

@@ -28,11 +28,11 @@
 	$(".nav_btn_wrap").on('click', function () {
 		if ($(this).hasClass('mobile-open')) {
 			$(this).removeClass('mobile-open')
-			$('.main-menu').removeClass('mobile-open')
+			$('.main-mobile-menu').removeClass('mobile-open')
 
 		} else {
 			$(this).addClass('mobile-open')
-			$('.main-menu').addClass('mobile-open')
+			$('.main-mobile-menu').addClass('mobile-open')
 		}
 	});
 
