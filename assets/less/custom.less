@@ -44,11 +44,15 @@
     margin: 0 auto;
     width: 100%;
     min-width: 300px;
-    z-index: 9999999999;
     background-color: @color_aid_one;
     overflow: hidden;
 
+    &.mobile-open {
+        z-index: 9999999999;
+    }
+
     &.fixed-header {
+
         .main-header {
             position: fixed;
             padding: 6px 0;
@@ -1113,6 +1117,12 @@
                         transition: all 200ms ease;
 
                         &:hover {
+                            color: @color_main;
+                        }
+                    }
+
+                    &.current {
+                        &>a {
                             color: @color_main;
                         }
                     }

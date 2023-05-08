@@ -29,10 +29,12 @@
 		if ($(this).hasClass('mobile-open')) {
 			$(this).removeClass('mobile-open')
 			$('.main-mobile-menu').removeClass('mobile-open')
+			$('.wellerpcb-wrapper').removeClass('mobile-open')
 
 		} else {
 			$(this).addClass('mobile-open')
 			$('.main-mobile-menu').addClass('mobile-open')
+			$('.wellerpcb-wrapper').addClass('mobile-open')
 		}
 	});
 

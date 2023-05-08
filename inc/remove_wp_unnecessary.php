@@ -55,11 +55,11 @@ function remove_wp_default_styles_scripts()
 {
     // Remove all default WordPress CSS files
     // wp_dequeue_style('wp-block-library'); // WordPress core
-    wp_dequeue_style('wp-block-library-theme'); // WordPress core
-    wp_dequeue_style('wc-block-style'); // WooCommerce
-    wp_dequeue_style('storefront-gutenberg-blocks'); // Storefront theme
-    wp_dequeue_style('storefront-gutenberg-blocks-rtl'); // Storefront theme
-    wp_dequeue_style('classic-theme-styles');
+    // wp_dequeue_style('wp-block-library-theme'); // WordPress core
+    // wp_dequeue_style('wc-block-style'); // WooCommerce
+    // wp_dequeue_style('storefront-gutenberg-blocks'); // Storefront theme
+    // wp_dequeue_style('storefront-gutenberg-blocks-rtl'); // Storefront theme
+    // wp_dequeue_style('classic-theme-styles');
     // wp_dequeue_style('global-styles'); // WordPress core
     // wp_dequeue_style('global-styles-inline'); // WordPress core
 
