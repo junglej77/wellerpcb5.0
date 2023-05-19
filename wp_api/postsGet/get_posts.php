@@ -41,6 +41,7 @@ function post_sort()
     );
     if (!empty($keyword)) {
         $args['s'] =  $keyword;
+        $args['post__not_in'] = array(1180); // 博客页面的id, 这个页面不展示
     }
     if (!empty($post_type)) {
         $args['post_type'] =  $post_type;
@@ -72,11 +73,15 @@ function post_sort()
         $results = array();
         foreach ($posts as $post) {
             // 标题中的关键词替换为带有HTML标签的关键词
-            $highlighted_post_title = str_replace($keyword, '<span class="highlighted">' . $keyword . '</span>', $post->post_title);
+            $highlighted_post_title = str_ireplace($keyword, '<span class="highlighted">' . $keyword . '</span>', strip_tags($post->post_title));
             // 摘要中的关键词替换为带有HTML标签的关键词
-            $highlighted_post_excerpt = str_replace($keyword, '<span class="highlighted">' . $keyword . '</span>', $post->post_excerpt);
+            $highlighted_post_excerpt = str_ireplace($keyword, '<span class="highlighted">' . $keyword . '</span>', strip_tags($post->post_excerpt));
             // 内容中的关键词替换为带有HTML标签的关键词
-            $highlighted_post_content = str_replace($keyword, '<span class="highlighted">' . $keyword . '</span>', $post->post_content);
+            $content = $post->post_content;
+            $content = preg_replace('/<!--(.*?)-->/', "", $content);
+            $content = preg_replace('/<style\b[^>]*>(.*?)<\/style>/s', "", $content);
+            $content = strip_tags($content);
+            $highlighted_post_content = str_ireplace($keyword, '<span class="highlighted">' . $keyword . '</span>', $content);
             // 获取关键词在文章内容中的位置
             $keyword_pos = strpos($highlighted_post_content, $keyword);
             // 定义需要提取的字符长度
@@ -91,7 +96,7 @@ function post_sort()
                     $start_pos = $keyword_pos - $char_length;
                 }
                 // 提取一段包含关键词的文字
-                $post_content_excerpt = substr($highlighted_post_content, $start_pos, strlen($keyword) + $char_length * 2);
+                $post_content_excerpt = substr($highlighted_post_content, $start_pos, strlen($keyword) + $char_length);
             } else {
                 // 如果关键词不在文章内容中，则使用文章的摘要作为提取的文字
                 // 如果关键词在文章的摘要中
@@ -126,7 +131,7 @@ function post_sort()
         }
     } else {
         // 如果没有文章，那么我们输出一个提示
-        echo '<p>Sorry, but nothing matched your search terms. Please try again with some different keywords.</p>';
+        echo '<p class="text-center">Sorry, but nothing matched your search terms. Please try again with some different keywords.</p>';
     }
 
 
@@ -261,6 +266,9 @@ function get_posts_list($array)
     }
     if (isset($array['meta_key'])) {
         $args['meta_key'] = $array['meta_key'];
+    }
+    if (isset($array['post__not_in'])) {
+        $args['post__not_in'] = $array['post__not_in'];
     }
     // 创建新的 WP_Query 对象
     $query = new WP_Query($args);

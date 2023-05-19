@@ -458,6 +458,21 @@ jQuery(function ($) {
 		$('#paged').val(1)
 		post_sort(true)
 	});
+	// 焦点在搜索框时， 按enter键
+	$(".keyword_search_input").keydown(function (e) {//input[name=pwd]当前所在焦点
+		if (e.keyCode == "13") {
+			$('#paged').val(1)
+			post_sort(true)
+		}
+	})
+	// 清空搜索内容并搜索
+	$('#search_clear').on('click', function () {
+		$('.keyword_search_input').val('')
+		$('#paged').val(1)
+		post_sort(true)
+	});
+
+
 	// 点击翻页按钮时
 	$('#post-container').on('click', '.page-numbers', function () {
 		var currentPage = $(this).text();
@@ -467,7 +482,7 @@ jQuery(function ($) {
 		} else if (currentPage.indexOf('Previous') >= 0) {
 			currentPage = parseInt($('#paged').val()) - 1
 		}
-		$('#paged').val(currentPage)
+		$('#paged').val(Boolean(parseInt(currentPage)) ? currentPage : 1)
 		post_sort()
 	});
 

@@ -30,11 +30,13 @@
                     </span>
                 </li>
             </ul>
-            <h4><a href="#" class="post-title"><?php the_title(); ?></a></h4>
+            <h4 class="post-title">
+                <?php the_title(); ?>
+            </h4>
             <p><?php the_content(); ?></p>
-            <a href="<?php echo the_Permalink(); ?>" class="btn btn-typ5">
+            <a href="<?php echo the_Permalink(); ?>" class="readMore">
                 Read More
-                <i class="fa fa-long-arrow-right"></i>
+                <i class="fa fa-long-arrow-alt-right"></i>
             </a>
         </div>
     </div>
