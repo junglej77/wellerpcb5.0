@@ -1,23 +1,11 @@
 <?php if (!defined('ABSPATH')) {
     exit;
 }
-// 404 页面
-function my_404_page($template)
-{
-    if (is_404()) {
-        $new_template = locate_template(array('template-parts/404/404.php'));
-        if ('' != $new_template) {
-            return $new_template;
-        }
-    }
-    return $template;
-}
-add_filter('template_include', 'my_404_page', 99);
 
-// 页面page
 function my_page_page($template)
 {
     if (is_page()) {
+        // 页面page
         $page = get_queried_object();
         $page_slug = $page->post_name;
         $custom_template = get_stylesheet_directory() . '/template-parts/page/page-' . $page_slug . '.php';
@@ -26,25 +14,11 @@ function my_page_page($template)
         } else {
             $template = get_stylesheet_directory() . '/template-parts/page/page.php';
         }
-    }
-    return $template;
-}
-add_filter('template_include', 'my_page_page', 99);
-
-// 分类页面category
-function my_category_page($template)
-{
-    if (is_category()) {
+    } else if (is_category()) {
+        // 分类页面category
         $template = get_stylesheet_directory() . '/template-parts/category/category.php';
-    }
-    return $template;
-}
-add_filter('template_include', 'my_category_page', 99);
-
-// 文章页面single
-function my_single_page($template)
-{
-    if (is_single()) {
+    } else  if (is_single()) {
+        // 文章页面single
         global $post;
         $custom_template = get_stylesheet_directory() . '/template-parts/single/single-' . $post->post_type . '.php';
         if (file_exists($custom_template)) {
@@ -52,10 +26,17 @@ function my_single_page($template)
         } else {
             $template = get_stylesheet_directory() . '/template-parts/single/single.php';
         }
+    } else  if (is_404()) {
+        // 404 页面
+        $new_template = locate_template(array('template-parts/404/404.php'));
+        if ('' != $new_template) {
+            return $new_template;
+        }
     }
     return $template;
 }
-add_filter('template_include', 'my_single_page', 99);
+add_filter('template_include', 'my_page_page', 99);
+
 
 // 使用自定header
 function my_header($option = '', $data = [])

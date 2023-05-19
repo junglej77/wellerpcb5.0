@@ -438,3 +438,72 @@
 	   ========================================================================== */
 
 })(window.jQuery);
+// ajax 请求文章页
+jQuery(function ($) {
+	// 点击排序按钮时
+	$('.sort-posts').on('click', function () {
+		$(this).addClass('active').siblings().removeClass('active');
+		$('#orderby').val($(this).data('orderby'))
+		$('#order').val($('#order').val() == 'DESC' ? 'ASC' : 'DESC')
+		console.log($(this).children('.updowm').attr('class'));
+		if ($('#order').val() == 'DESC') {
+			$(this).children('.updowm').removeClass('fa-caret-up').addClass('fa-caret-down')
+		} else {
+			$(this).children('.updowm').removeClass('fa-caret-down').addClass('fa-caret-up')
+		}
+		post_sort()
+	});
+	// 点击搜索按钮时
+	$('.keyword_search_submit_btn').on('click', function () {
+		$('#paged').val(1)
+		post_sort(true)
+	});
+	// 点击翻页按钮时
+	$('#post-container').on('click', '.page-numbers', function () {
+		var currentPage = $(this).text();
+		// 前后翻页判断
+		if (currentPage.indexOf('Next') >= 0) {
+			currentPage = parseInt($('#paged').val()) + 1
+		} else if (currentPage.indexOf('Previous') >= 0) {
+			currentPage = parseInt($('#paged').val()) - 1
+		}
+		$('#paged').val(currentPage)
+		post_sort()
+	});
+
+	function post_sort(isRecordKeyword) {
+		var data = {
+			action: 'post_sort',
+			keyword: $.trim($('.keyword_search_input').val()),
+			post_type: $('#postType').val(),
+			cat: $('#cat').val(),
+			posts_per_page: $('#pages').val(),
+			paged: $('#paged').val(),
+			orderby: $('#orderby').val(),
+			order: $('#order').val(),
+			meta_key: $('#meta_key').val(),
+		};
+		//1.如果有搜索词，就去掉内容类型
+		//2.blog list 的导航Posts变成All
+		//3.isRecordKeyword 为true , 就记录该关键搜索
+		if (data.keyword.length != 0) {
+			delete data.post_type;
+			$('#postsToAll').text('All')
+			data.isRecordKeyword = isRecordKeyword
+		} else {
+			$('#postsToAll').text('Posts')
+		}
+		// 如果排序方式是meta_value_num， 则添加一个字段
+		if (data.orderby == 'post_modified') {
+			delete data.meta_key
+		}
+		$.ajax({
+			url: '/wp-admin/admin-ajax.php',
+			type: 'POST',
+			data: data,
+			success: function (response) {
+				$('#post-container').html(response);
+			}
+		});
+	}
+});

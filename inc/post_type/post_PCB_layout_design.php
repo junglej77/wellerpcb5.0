@@ -15,7 +15,6 @@ function create_PCB_layout_design_post_types()
       'public' => true,
       'has_archive' => true,
       'supports' => array('title', 'editor', 'author', 'thumbnail', 'excerpt',  'custom-fields', 'comments', 'page-attributes', 'post-formats'),
-      'taxonomies' => array('category', 'post_tag'),
       'show_in_rest' => true, // 指定使用 REST API
     )
   );
