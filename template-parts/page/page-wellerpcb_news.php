@@ -97,7 +97,7 @@ process_postviews();
                     <input type="hidden" id="paged" value="<?php echo $results['page']['paged']  ?>">
                     <input type="hidden" id="orderby" value="<?php echo $results['orderby']  ?>">
                     <input type="hidden" id="order" value="<?php echo $results['order']  ?>">
-                    <input type="hidden" id="meta_key" value="_check_count">
+                    <input type="hidden" id="meta_key" value="_false_total_views">
                 </div>
             </div>
         </div>

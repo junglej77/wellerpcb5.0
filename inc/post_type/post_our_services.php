@@ -19,20 +19,6 @@ function create_our_services_post_types()
   );
 }
 add_action('init', 'create_our_services_post_types');
-
-function create_services_taxonomy()
-{
-  register_taxonomy(
-    'our_services_category',  // 分类名
-    'our_services',  // 文章类型
-    array(
-      'label' => __('分类'),
-      'rewrite' => array('slug' => 'custom_category'),
-      'hierarchical' => true,  // 这使得您可以创建子分类
-    )
-  );
-}
-add_action('init', 'create_services_taxonomy');
 /**
  *'title'：标题
  *'editor'：内容编辑器

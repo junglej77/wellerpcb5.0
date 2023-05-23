@@ -11,6 +11,7 @@ function create_search_table()
     $sql = "CREATE TABLE $table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         keyword text NOT NULL,
+        ip_address varchar(45) NOT NULL,
         search_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
         PRIMARY KEY (id)
     ) $charset_collate;";
@@ -56,16 +57,7 @@ function post_sort()
     $posts = $query->posts;
     // $isRecordKeyword 为 true 记录该搜索词相关信息
     if ($isRecordKeyword) {
-        // 将搜索关键词存储到我们创建的数据库表中
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'search_keywords';
-        $wpdb->insert(
-            $table_name,
-            array(
-                'keyword' => $keyword,
-                'search_date' => current_time('mysql')
-            )
-        );
+        insert_keyword($keyword);
     }
     // 关键词不为空高亮处理
     if (!empty($keyword)) {
@@ -152,6 +144,38 @@ function post_sort()
 }
 add_action('wp_ajax_post_sort', 'post_sort');
 add_action('wp_ajax_nopriv_post_sort', 'post_sort');
+
+// 插入搜索关键操作
+// 插入搜索关键操作
+function insert_keyword($keyword)
+{
+    // 将搜索关键词存储到我们创建的数据库表中
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'search_keywords';
+
+    //获取用户IP
+    $user_ip = $_SERVER['REMOTE_ADDR'];
+
+    //查询是否存在在12小时内同一IP和关键词的记录
+    $existing = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM $table_name WHERE ip_address = %s AND keyword = %s AND search_date > DATE_SUB(NOW(), INTERVAL 12 HOUR)",
+        $user_ip,
+        $keyword
+    ));
+
+    //如果不存在相同的记录，则插入新记录
+    if ($existing == 0) {
+        $wpdb->insert(
+            $table_name,
+            array(
+                'keyword' => $keyword,
+                'ip_address' => $user_ip,
+                'search_date' => current_time('mysql')
+            )
+        );
+    }
+}
+
 /***********文章统计*********/
 function process_postviews()
 {
@@ -167,6 +191,7 @@ function process_postviews()
             //$post_views = get_post_custom($id);
 
             $post_views = intval(get_post_meta($id, '_check_count', true));
+            $false_check_count = intval(get_post_meta($post->ID, 'false_check_count', true));
             //统计所有人
             $should_count = true;
             //排除机器人
@@ -181,6 +206,9 @@ function process_postviews()
             if ($should_count) {
                 if (!update_post_meta($id, '_check_count', ($post_views + 1))) {
                     add_post_meta($id, '_check_count', 1, true);
+                    update_post_meta($id, '_false_total_views', (1 + $false_check_count));
+                } else {
+                    update_post_meta($id, '_false_total_views', ($post_views + 1 + $false_check_count));
                 }
             }
         }
@@ -209,7 +237,7 @@ function check_cookie($post)
 ### Function: Display The Post Views
 function the_views($display = true, $id)
 {
-    $post_views = intval(get_post_meta($id, '_check_count', true));
+    $post_views = intval(get_post_meta($id, '_false_total_views', true));
     $output = number_format_i18n($post_views);
     if ($display) {
         echo $output;
@@ -217,6 +245,7 @@ function the_views($display = true, $id)
         return $output;
     }
 }
+
 ### Function: Display Total Views
 if (!function_exists('get_totalviews')) {
     function get_totalviews($display = true)
@@ -230,6 +259,16 @@ if (!function_exists('get_totalviews')) {
         }
     }
 }
+//当 _check_count 或 false_check_count 字段的值被更新时，该函数会更新 _false_total_views 字段的值
+function update_total_views($post_id)
+{
+    $check_count = intval(get_post_meta($post_id, '_check_count', true));
+    $false_check_count = intval(get_post_meta($post_id, 'false_check_count', true));
+    $total_views = $check_count + $false_check_count;
+    update_post_meta($post_id, '_false_total_views', $total_views);
+}
+add_action('updated_post_meta', 'update_total_views', 10, 4);
+
 ### Function: Add Views Custom Fields
 add_action('publish_post', 'add_views_fields');
 add_action('publish_page', 'add_views_fields');
@@ -242,11 +281,14 @@ function add_views_fields($post_ID)
 }
 ### Function: Delete Views Custom Fields
 add_action('delete_post', 'delete_views_fields');
+add_action('publish_page', 'delete_views_fields');
 function delete_views_fields($post_ID)
 {
     global $wpdb;
     if (!wp_is_post_revision($post_ID)) {
         delete_post_meta($post_ID, '_check_count');
+        delete_post_meta($post_ID, 'false_check_count');
+        delete_post_meta($post_ID, '_false_total_views');
     }
 }
 // wp 获取对应文章类型前台渲染

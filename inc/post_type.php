@@ -8,6 +8,7 @@ require_once get_template_directory() . '/inc/post_type/post_PCB_assembly.php'; 
 require_once get_template_directory() . '/inc/post_type/post_our_services.php'; // 添加自定我们的服务
 // require_once get_template_directory() . '/inc/post_type/post_product.php'; // 添加自定产品文章
 
+//*************************************************************添加新的时间排序 */
 // 移除默认的标签列
 function remove_tags_column($defaults)
 {
@@ -78,6 +79,7 @@ function sort_new_date_column($query)
 }
 add_action('pre_get_posts', 'sort_new_date_column');
 
+//*************************************************************添加真实浏览次数排序 */
 
 // 添加新的文章列表浏览次数列
 function add_views_column($columns)
@@ -120,6 +122,82 @@ function sort_views_column($query)
   }
 }
 add_action('pre_get_posts', 'sort_views_column');
+//*************************************************************添加假浏览次数排序 */
+// 添加新的文章列表浏览次数列
+function add_false_views_column($columns)
+{
+  $columns['_false_total_views'] = 'total_views';
+  return $columns;
+}
+add_filter('manage_posts_columns', 'add_false_views_column');
+add_filter('manage_pages_columns', 'add_false_views_column');
+
+// 在新列中显示文章的浏览次数
+function show_false_views_count($column, $post_id)
+{
+  if ($column == '_false_total_views') {
+    echo get_post_meta($post_id, '_false_total_views', true);
+  }
+}
+add_action('manage_posts_custom_column', 'show_false_views_count', 10, 2);
+add_action('manage_pages_custom_column', 'show_false_views_count', 10, 2);
+
+// 为浏览次数添加排序功能
+function register_false_views_count_column_sortable($columns)
+{
+  $columns['_false_total_views'] = '_false_total_views';
+  return $columns;
+}
+
+foreach ($post_types as $post_type) {
+  add_filter("manage_edit-{$post_type}_sortable_columns", 'register_false_views_count_column_sortable');
+}
+function sort_false_views_column($query)
+{
+  if (!is_admin() || !$query->is_main_query()) {
+    return;
+  }
+
+  if ($query->get('orderby') == '_false_total_views') {
+    $query->set('meta_key', '_false_total_views');
+    $query->set('orderby', 'meta_value_num');
+  }
+}
+add_action('pre_get_posts', 'sort_false_views_column');
+//*************************************************************添加特色图片缩略图 */
+function add_thumbnail_column($columns)
+{
+  // 在标题列前添加缩略图列
+  $offset = array_search('title', array_keys($columns));
+
+  // 在特定位置插入新列
+  return array_merge(
+    array_slice($columns, 0, $offset, true),
+    array('thumbnail' => __('Thumbnail')),
+    array_slice($columns, $offset, null, true)
+  );
+}
+add_filter('manage_posts_columns', 'add_thumbnail_column');
+add_filter('manage_pages_columns', 'add_thumbnail_column');
+// 设置缩略图的内容
+function set_thumbnail_column_content($column_name, $post_id)
+{
+  if ($column_name == 'thumbnail') {
+    if (has_post_thumbnail($post_id)) {
+      // 有特色图片，则展示特色图片
+      echo '<a href="' . get_the_post_thumbnail_url($post_id, 'full') . '" target="_blank">';
+      echo '<img src="' . get_the_post_thumbnail_url($post_id, 'thumbnail') . '" width=60 height=60 style="cursor:pointer;">';
+      echo '</a>';
+      // echo '<img src="' . get_the_post_thumbnail_url($post_id, 'thumbnail') . '" width=60 height=60>';
+    } else {
+      // 没有特色图片，输出提示信息
+      echo 'Not yet set';
+    }
+  }
+}
+add_action('manage_posts_custom_column', 'set_thumbnail_column_content', 10, 2);
+add_action('manage_pages_custom_column', 'set_thumbnail_column_content', 10, 2);
+
 // 为之前的文章页添加浏览次数字段
 function add_views_fields_to_all_posts()
 {
@@ -133,6 +211,16 @@ function add_views_fields_to_all_posts()
     if (!metadata_exists('post', $post->ID, '_check_count')) {
       add_post_meta($post->ID, '_check_count', 0, true);
     }
+    if (!metadata_exists('post', $post->ID, 'false_check_count')) {
+      add_post_meta($post->ID, 'false_check_count', 0, true);
+    }
+    $_check_count = intval(get_post_meta($post->ID, '_check_count', true));
+    $false_check_count = intval(get_post_meta($post->ID, 'false_check_count', true));
+    if (!metadata_exists('post', $post->ID, '_false_total_views')) {
+      add_post_meta($post->ID, '_false_total_views', $_check_count + $false_check_count, true);
+    } else {
+      update_post_meta($post->ID, '_false_total_views', ($_check_count + $false_check_count));
+    }
   }
 }
-add_views_fields_to_all_posts();
+add_action('init', 'add_views_fields_to_all_posts');

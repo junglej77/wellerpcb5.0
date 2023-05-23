@@ -14,6 +14,7 @@ function create_PCB_fabrication_post_types()
       ),
       'public' => true,
       'has_archive' => true,
+      'supports' => array('title', 'editor', 'author', 'thumbnail', 'excerpt',  'custom-fields', 'comments', 'page-attributes', 'post-formats'),
       'show_in_rest' => true, // 指定使用 REST API
     )
   );
