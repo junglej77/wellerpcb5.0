@@ -17,7 +17,6 @@ Version: 5.0
 	padding: 0px;
 	border: none;
 	outline: none;
-	font-size: 18px;
 }
 
 
@@ -32,7 +31,7 @@ Version: 5.0
 
 body {
 
-	font-size: 14px;
+	font-size: 18px;
 	color: #333333;
 	line-height: 28px;
 	font-weight: 400;
