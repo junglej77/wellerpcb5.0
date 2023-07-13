@@ -43,30 +43,24 @@ function my_custom_admin_styles($hook)
   if (
     $pagenow == 'admin.php'
   ) {
-    // 加载 Vue.js 库
-    // wp_enqueue_script('vue', 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js', array(), '2.6.12',);
-    wp_enqueue_script('vue', 'https://unpkg.com/vue@next');
-
-    // 加载 ElementUI 的 CSS 样式文件
-    // wp_enqueue_style('element-ui', 'https://unpkg.com/element-ui/lib/theme-chalk/index.css');
-    wp_enqueue_style('elementPlus', 'https://unpkg.com/element-plus@latest/theme-chalk/index.css');
-
-
-
-    // 引入图标库
-    wp_enqueue_script('elementPlusIcons', 'https://unpkg.com/@element-plus/icons-vue', array('vue'),);
-
-    // 加载 ElementUI 的 JavaScript 文件
-    // wp_enqueue_script('element-ui', 'https://unpkg.com/element-ui/lib/index.js', array('vue'), '2.15.1',);
-    wp_enqueue_script('elementPlus', 'https://unpkg.com/element-plus@latest', array('vue'),);
-
-    wp_enqueue_script('Sortable', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.8.3/Sortable.min.js', array(), '',);
-
-    //引入axios 请求
-    wp_enqueue_script('axios', 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js', array(), '',);
-
-    //引入自定义后台样式表
-    wp_enqueue_style('admin-ui', get_stylesheet_directory_uri() . '/assets/css/admin-ui.css', array(), wp_get_theme()->get('Version'), 'all');
+    if (isset($_GET['page'])) {
+      $current_menu =  $_GET['page'];
+      if ($current_menu == 'page_edit') {
+        // 加载 Vue.js 库
+        wp_enqueue_script('vue', 'https://unpkg.com/vue@next');
+        // 加载 ElementUI 的 CSS 样式文件
+        wp_enqueue_style('elementPlus', 'https://unpkg.com/element-plus@latest/theme-chalk/index.css');
+        // 引入图标库
+        wp_enqueue_script('elementPlusIcons', 'https://unpkg.com/@element-plus/icons-vue', array('vue'),);
+        // 加载 ElementUI 的 JavaScript 文件
+        wp_enqueue_script('elementPlus', 'https://unpkg.com/element-plus@latest', array('vue'),);
+        wp_enqueue_script('Sortable', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.8.3/Sortable.min.js', array(), '',);
+        //引入axios 请求
+        wp_enqueue_script('axios', 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js', array(), '',);
+        //引入自定义后台样式表
+        wp_enqueue_style('admin-ui', get_stylesheet_directory_uri() . '/assets/css/admin-ui.css', array(), wp_get_theme()->get('Version'), 'all');
+      }
+    }
   }
 }
 // 在后台指定页面引入样式
